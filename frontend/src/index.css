@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* (optional) your minimal global resets */
+html, body, #root { height: 100%; }
+body { margin: 0; } /* disable window scrollbars */
+
