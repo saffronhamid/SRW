@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC1Ig1-P4lKmNq8NjNtNMwWZjbIY7zLYfU",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "smartrent-d3395.firebaseapp.com",
   projectId: "smartrent-d3395",
   storageBucket: "smartrent-d3395.firebasestorage.app",
