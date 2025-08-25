@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../src/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+ // Adjust the import path as needed 
 
 // NOTE: pages/ is a sibling of src/, so we go up once, then into src/assets
 import googleLogo from "../src/assets/google.svg";
@@ -18,17 +22,36 @@ const LoginUser: React.FC = () => {
   const [showPw, setShowPw] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
     if (!email || !pw) return setErr("Please enter email and password.");
     setLoading(true);
-    setTimeout(() => setLoading(false), 800);
+    try {
+      await signInWithEmailAndPassword(auth, email, pw);
+      navigate("/user/dashboard");
+    } catch (error: any) {
+      setErr(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // stub handlers for social auth
-  const withGoogle = () => alert("Continue with Google coming soon.");
+const withGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("Google Login Successful:", user);
+    navigate("/user/dashboard"); // or wherever you want
+  } catch (err: any) {
+    console.error(err);
+    setErr("Google login failed: " + err.message);
+  }
+};
   const withFacebook = () => alert("Continue with Facebook coming soon.");
   const withApple = () => alert("Continue with Apple coming soon.");
 
