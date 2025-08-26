@@ -1,40 +1,51 @@
+// pages/LoginOwner.tsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../src/firebase";
 
-// paths match your structure: pages/  ↔  src/assets/
 import googleLogo from "../src/assets/google.svg";
 import facebookLogo from "../src/assets/facebook.svg";
 import appleLogo from "../src/assets/apple.svg";
 
 const fieldVariants = {
   focus: { boxShadow: "0 0 0 4px rgba(56,189,248,.25)" },
-  blur:  { boxShadow: "0 0 0 0 rgba(0,0,0,0)" }
+  blur: { boxShadow: "0 0 0 0 rgba(0,0,0,0)" }
 };
 
-const LoginUser: React.FC = () => {
+const LoginOwner: React.FC = () => {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErr(null);
-    if (!email || !pw) return setErr("Please enter email and password.");
-    setLoading(true);
-    setTimeout(() => setLoading(false), 800);
+    setErr("Please use Google login as Owner.");
   };
 
-  // stubs for SSO
-  const withGoogle = () => alert("Continue with Google coming soon.");
-  const withFacebook = () => alert("Continue with Facebook coming soon.");
-  const withApple = () => alert("Continue with Apple coming soon.");
+ const withGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log("Owner Login Successful:", result.user);
+    navigate("/owner/profile-form");
+  } catch (err: any) {
+    setErr("Google login failed: " + err.message);
+  }
+};
+
+
+  const withFacebook = () => alert("Facebook login coming soon.");
+  const withApple = () => alert("Apple login coming soon.");
 
   return (
     <div className="relative h-screen overflow-hidden bg-gradient-to-b from-sky-200 via-sky-100 to-white">
-      {/* floating orbs */}
       <motion.div
         className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-sky-300/40 blur-3xl"
         animate={{ y: [0, 20, 0], x: [0, 10, 0] }}
@@ -53,7 +64,6 @@ const LoginUser: React.FC = () => {
           transition={{ type: "spring", stiffness: 120, damping: 16 }}
           className="w-full max-w-md rounded-3xl bg-white/80 p-6 shadow-2xl ring-1 ring-black/10 backdrop-blur-xl"
         >
-          {/* icon badge */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -63,9 +73,9 @@ const LoginUser: React.FC = () => {
           </motion.div>
 
           <div className="text-center">
-            <h1 className="text-xl font-semibold text-slate-900">Sign in with email</h1>
+            <h1 className="text-xl font-semibold text-slate-900">Sign in as Owner</h1>
             <p className="mt-1 text-sm text-slate-600">
-              Welcome back! Access your SmartRent account.
+              Welcome back! Access your SmartRent Owner account.
             </p>
           </div>
 
@@ -76,7 +86,6 @@ const LoginUser: React.FC = () => {
           )}
 
           <form onSubmit={submit} className="mt-6 space-y-4">
-            {/* Email */}
             <motion.label
               animate={email ? "focus" : "blur"}
               variants={fieldVariants}
@@ -94,7 +103,6 @@ const LoginUser: React.FC = () => {
               </div>
             </motion.label>
 
-            {/* Password */}
             <motion.label
               animate={pw ? "focus" : "blur"}
               variants={fieldVariants}
@@ -137,7 +145,6 @@ const LoginUser: React.FC = () => {
             </motion.button>
           </form>
 
-          {/* divider */}
           <div className="my-6">
             <div className="flex items-center">
               <div className="h-px flex-1 bg-slate-200" />
@@ -148,7 +155,6 @@ const LoginUser: React.FC = () => {
             </div>
           </div>
 
-          {/* social providers with logos */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <motion.button
               whileHover={{ y: -2 }}
@@ -194,4 +200,4 @@ const LoginUser: React.FC = () => {
   );
 };
 
-export default LoginUser;
+export default LoginOwner;
