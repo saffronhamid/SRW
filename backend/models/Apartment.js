@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 
-const ApartmentSchema = new mongoose.Schema({
+const apartmentSchema = new mongoose.Schema({
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "Owner" },
   title: String,
-  address: String,
-  rent: Number,
-  rooms: Number,
-  size: String,
-  images: [String],
-  documents: [String],
-  verificationStatus: { type: String, default: "pending" }, // or 'verified', 'rejected'
-  createdAt: { type: Date, default: Date.now },
+  description: String,
+  location: String,
+  price: Number,
+  documentURL: String,
+  isVerified: { type: Boolean, default: false }
 });
 
-module.exports = mongoose.model("Apartment", ApartmentSchema);
+module.exports = mongoose.model("Apartment", apartmentSchema);
